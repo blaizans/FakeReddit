@@ -1,30 +1,42 @@
 ﻿using Application.DaoInterfaces;
 using Domain.DTOs;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace EfcDataAcces.DAOs
 {
     public class PostEfcDao : IPostDao
     {
+        private readonly PostContext context;
+
+        public PostEfcDao(PostContext context)
+        {
+            this.context = context;
+        }
         public async Task<Post> CreateAsync(Post post)
         {
-            // Implement the logic to create a new post in the database
-            // and return the created post.
-            throw new NotImplementedException();
+            EntityEntry<Post> added = await context.Posts.AddAsync(post);
+            await context.SaveChangesAsync();
+            return added.Entity;
         }
 
-        public async Task<IEnumerable<Post>> GetAsync(SearchPostParametersDto searchParams)
+        public async Task<IEnumerable<Post>> GetAsync(SearchPostParametersDto searchParameters)
         {
-            // Implement the logic to retrieve a list of posts from the database
-            // based on the provided search parameters and return the list of posts.
-            throw new NotImplementedException();
+            IQueryable<Post> usersQuery = context.Posts.AsQueryable();
+            if (searchParameters.TitleContains != null)
+            {
+                usersQuery = usersQuery.Where(u => u.Title.ToLower().Contains(searchParameters.TitleContains.ToLower()));
+            }
+
+            IEnumerable<Post> result = await usersQuery.ToListAsync();
+            return result;
         }
 
-        public async Task<Post?> GetByIdAsync(int postId)
+        public async Task<Post?> GetByIdAsync(int id)
         {
-            // Implement the logic to retrieve a single post from the database
-            // based on the provided post ID and return the post.
-            throw new NotImplementedException();
+            Post? post = await context.Posts.FindAsync(id);
+            return post;
         }
 
         public async Task DeleteAsync(int postId)

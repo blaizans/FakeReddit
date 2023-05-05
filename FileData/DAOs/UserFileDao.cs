@@ -1,11 +1,11 @@
-﻿using Application.DaoInterfaces;
-using Domain.DTOs;
+﻿using Domain.DTOs;
 using Domain.Models;
 using Shared.Dtos;
+using System.Collections.Generic;
 
 namespace FileData.DAOs;
 
-public class UserFileDao : IUserDao
+public class UserFileDao 
 {
     private readonly FileContext context;
 
@@ -14,7 +14,7 @@ public class UserFileDao : IUserDao
         this.context = context;
     }
 
-    public Task<User> CreateAsync(User user)
+    public Task<User?> CreateAsync(User? user)
     {
         int userId = 1;
         if (context.Users.Any())
@@ -39,17 +39,22 @@ public class UserFileDao : IUserDao
         return Task.FromResult(existing);
     }
 
-    public Task<User?> GetAsync(UserLoginDto loginUser)
+    public Task<IEnumerable<User?>> GetAsync(UserLoginDto loginUser)
     {
-        User user = null;
+        User? user = null;
         if (loginUser.UserName != null && loginUser.Password != null)
         {
-             user  = context.Users.FirstOrDefault(u => 
+            user  = context.Users.FirstOrDefault(u => 
                 u.UserName.Contains(loginUser.UserName, StringComparison.OrdinalIgnoreCase) && u.Password.Contains(loginUser.Password, StringComparison.Ordinal));
         }
-        return Task.FromResult(user);
+        return null;
     }
-
+    
+    public Task<IEnumerable<User?>> GetAsync(SearchUserParametersDto searchParameters)
+    {
+        throw new NotImplementedException();
+    }
+    
     public Task<User?> GetByIdAsync(int id)
     {
         User? existing = context.Users.FirstOrDefault(u =>
@@ -58,7 +63,7 @@ public class UserFileDao : IUserDao
         return Task.FromResult(existing);
     }
 
-    public async Task<List<User>> GetAllAsync()
+    public async Task<List<User?>> GetAllAsync()
     {
         return context.Users.ToList();
     }

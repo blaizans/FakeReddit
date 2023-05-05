@@ -17,7 +17,7 @@ public class FileContext
         }
     }
 
-    public ICollection<User> Users
+    public ICollection<User?> Users
     {
         get
         {

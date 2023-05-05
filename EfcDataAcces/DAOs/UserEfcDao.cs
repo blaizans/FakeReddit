@@ -29,9 +29,17 @@ public class UserEfcDao : IUserDao
         return existing;
     }
 
-    public Task<User?> GetAsync(UserLoginDto searchParameters)
+    public async Task<IEnumerable<User?>> GetAsync(SearchUserParametersDto searchParameters)
     {
-        throw new NotImplementedException();
+        IQueryable<User> usersQuery = context.Users.AsQueryable();
+        if (searchParameters.UsernameContains != null)
+        {
+            usersQuery = usersQuery.Where(u => u.UserName.ToLower().Contains(searchParameters.UsernameContains.ToLower()));
+        }
+        Console.WriteLine("test");
+
+        IEnumerable<User> result = await usersQuery.ToListAsync();
+        return result;
     }
 
     public async Task<User?> GetByIdAsync(int id)
@@ -41,6 +49,11 @@ public class UserEfcDao : IUserDao
     }
     
     public async Task<List<User>> GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+    
+    Task<IEnumerable<User?>> IUserDao.GetAsync(UserLoginDto searchParameters)
     {
         throw new NotImplementedException();
     }

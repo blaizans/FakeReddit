@@ -4,8 +4,7 @@ using Application.Logic;
 using Application.LogicInterfaces;
 using EfcDataAcces;
 using EfcDataAcces.DAOs;
-
-
+using FileData;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,12 +17,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<PostContext>();
+builder.Services.AddScoped<FileContext>();
 builder.Services.AddScoped<IUserDao, UserEfcDao>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
 
 builder.Services.AddScoped<IPostDao, PostEfcDao>();
 builder.Services.AddScoped<IPostLogic, PostLogic>();
+builder.Services.AddDbContext<PostContext>();
 
 
 // added auth handling
